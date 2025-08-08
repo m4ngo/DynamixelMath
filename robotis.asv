@@ -13,59 +13,67 @@ p_4T = [0.1467, 0, 0];
 
 % inverse kinematics
 
+% Point on axis 4
+p_04 = p_01 + p_12 + p_23 + p_34;
+% Point on axis 1 and 2
+p_02 = p_01 + p_12;
+
 % Goal rotation/position
 x_angle = 0;
 y_angle = 0;
-z_angle = 0;
+z_angle = pi/2;
 
 goal_rotation = rot_z(z_angle) * rot_y(y_angle) * rot_x(x_angle);
-goal_position = [0.3067; 0; 0.2045];
+goal_position = [0; 0.286; 0.2045];
 
 goal = [goal_rotation, goal_position]; % goal pos/rot as 4x4
 goal = [goal; 0, 0, 0, 1];
 
 base_rotation = rot_z(0) * rot_y(0) * rot_x(0); % home pos/rot as 4x4
-base_position = p_01' + p_12' + p_23' + p_34' + p_4T';
+base_position = p_
 base = [base_rotation, base_position];
 base = [base; 0, 0, 0, 1];
 
 % Matrix multiply: Base^(-1)*Goal^(-1)
-g = base \ goal;
+goal = base \ goal;
 
-% Find a point on axis 4
-p_04 = p_01 + p_12 + p_23 + p_34;
-% Find a point on axis 1 and 2
-p_02 = p_01 + p_12;
+theta3_list = joint3(p_04', p_02', axis3', goal);
 
-theta3_list = joint3(p_04', p_02', axis3', g); % subproblem 3
+results = [];
 
-results = []; % just a table to store all the possible solution combinations
-
+l_1 = norm(p_01);
+l_2 = norm(p_12);
 p_03 = p_01 + p_12 + p_23;
 
 for theta3 = theta3_list
+    %[
+     %   cos(theta3) 0 sin(theta3) l_2 - sqrt(l_1^2+l_2^2) * sin(90 - theta3 - atan2(l_1, l_2));
+      %  0 1 0 0;
+       % -sin(theta3) 0 cos(theta3) l_1+sqrt(l_1^2+l_2^2) * cos(90 - theta3 - atan2(l_1, l_2));
+        %0 0 0 1
+        %]
     y_matrix = [rot_y(theta3), [0;0;0]];
     y_matrix = [y_matrix ; 0 0 0 1];
     e_3 = [1 0 0 p_03(1); 0 1 0 p_03(2); 0 0 1 p_03(3); 0 0 0 1] * y_matrix * [1 0 0 -p_03(1); 0 1 0 -p_03(2); 0 0 1 -p_03(3); 0 0 0 1];
     
-    [theta1_list, theta2_list] = joint1joint2(p_04', e_3, g, axis1', axis2');
+    [theta1_list, theta2_list] = joint1joint2(p_04', e_3, goal, axis1', axis2');
     
     for theta1 = theta1_list
         for theta2 = theta2_list
             theta4 = joint4(y_angle, theta2, theta3);
             results = [results, [theta1; theta2; theta3; theta4;]];
         end
-    end 
+    end    
 end
 
 disp(results);
 
 % forward kinematics
 
-joint_1_rot = results(1,4);
-joint_2_rot = results(2,4);
-joint_3_rot = results(3,4);
-joint_4_rot = results(4,4);
+joint_1_rot = results(1,1);
+joint_2_rot = results(2,1);
+joint_3_rot = results(3,1);
+joint_4_rot = results(4,1);
 
 final_pos = p_01' + rot_z(joint_1_rot)*p_12' ...
 + rot_z(joint_1_rot) * rot_y(joint_2_rot) * p_23' ...
