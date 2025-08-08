@@ -16,10 +16,10 @@ p_4T = [0.1467, 0, 0];
 % Goal rotation/position
 x_angle = 0;
 y_angle = 0;
-z_angle = 0;
+z_angle = pi/2;
 
 goal_rotation = rot_z(z_angle) * rot_y(y_angle) * rot_x(x_angle);
-goal_position = [0.3067; 0; 0.2045];
+goal_position = [0; 0.3067; 0.2045];
 
 goal = [goal_rotation, goal_position]; % goal pos/rot as 4x4
 goal = [goal; 0, 0, 0, 1];
@@ -30,14 +30,16 @@ base = [base_rotation, base_position];
 base = [base; 0, 0, 0, 1];
 
 % Matrix multiply: Base^(-1)*Goal^(-1)
-g = base \ goal;
+g = goal\base;
 
 % Find a point on axis 4
 p_04 = p_01 + p_12 + p_23 + p_34;
 % Find a point on axis 1 and 2
 p_02 = p_01 + p_12;
 
-theta3_list = joint3(p_04', p_02', axis3', g); % subproblem 3
+p_03 = p_01 + p_12 + p_23;
+
+theta3_list = joint3(p_04', p_02', axis3', g, p_03'); % subproblem 3
 
 results = []; % just a table to store all the possible solution combinations
 
@@ -62,10 +64,10 @@ disp(results);
 
 % forward kinematics
 
-joint_1_rot = results(1,4);
-joint_2_rot = results(2,4);
-joint_3_rot = results(3,4);
-joint_4_rot = results(4,4);
+joint_1_rot = results(1,1);
+joint_2_rot = results(2,1);
+joint_3_rot = results(3,1);
+joint_4_rot = results(4,1);
 
 final_pos = p_01' + rot_z(joint_1_rot)*p_12' ...
 + rot_z(joint_1_rot) * rot_y(joint_2_rot) * p_23' ...
