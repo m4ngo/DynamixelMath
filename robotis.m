@@ -19,18 +19,18 @@ y_angle = 0;
 z_angle = 0;
 
 goal_rotation = rot_z(z_angle) * rot_y(y_angle) * rot_x(x_angle);
-goal_position = [0.3067; 0; 0.2045];
+goal_position = [0.2067; 0; 0.2045];
 
 goal = [goal_rotation, goal_position]; % goal pos/rot as 4x4
 goal = [goal; 0, 0, 0, 1];
 
 base_rotation = rot_z(0) * rot_y(0) * rot_x(0); % home pos/rot as 4x4
-base_position = p_01' + p_12' + p_23' + p_34' + p_4T';
+base_position = p_01' + p_12' + p_23' + p_34'+ p_4T';
 base = [base_rotation, base_position];
 base = [base; 0, 0, 0, 1];
 
 % Matrix multiply: Base^(-1)*Goal^(-1)
-g = goal\base;
+g = goal*inv(base);
 
 % Find a point on axis 4
 p_04 = p_01 + p_12 + p_23 + p_34;

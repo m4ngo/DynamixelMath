@@ -1,7 +1,10 @@
 function theta3 = joint3(p, q, axis, goal, axis_offset)
     % p: a point on axis 4
     % q: a point on axis 1 and axis 2
+    pt = p - axis_offset;
+    qt = q- axis_offset;
     goalxp = goal * [p; 1];
     goalxp(4) = [];
-    [theta3, ~] = subproblem.sp_3(p-axis_offset, q-axis_offset, axis, norm(goalxp-q));
+    d = norm(goalxp-q);
+    [theta3, ~] = subproblem.sp_3(pt, qt, axis, d);
 end
