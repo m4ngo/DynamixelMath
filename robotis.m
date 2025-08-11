@@ -33,8 +33,8 @@ x_angle = 0;
 y_angle = 0;
 z_angle = 0;
 
-goal_rotation = final_rot; % rot_z(z_angle) * rot_y(y_angle) * rot_x(x_angle);
-goal_position = final_pos; % [0.3067; 0; 0.2045];
+goal_rotation = final_rot;%rot_z(z_angle) * rot_y(y_angle) * rot_x(x_angle);
+goal_position = final_pos;%[0.3067; 0; 0.2045];
 
 goal = [goal_rotation, goal_position]; % goal pos/rot as 4x4
 goal = [goal; 0, 0, 0, 1];
@@ -76,3 +76,25 @@ for theta3 = theta3_list
 end
 
 disp(results);
+
+final_pos_results = [];
+
+% forward kinematics
+for i = 1:size(results, 2)
+    joint_1_rot = results(1,i);
+    joint_2_rot = results(2,i);
+    joint_3_rot = results(3,i);
+    joint_4_rot = results(4,i);
+    
+    final_pos = p_01' + rot_z(joint_1_rot)*p_12' ...
+    + rot_z(joint_1_rot) * rot_y(joint_2_rot) * p_23' ...
+    + rot_z(joint_1_rot) * rot_y(joint_2_rot+joint_3_rot) * p_34' ...
+    + rot_z(joint_1_rot) * rot_y(joint_2_rot+joint_3_rot+joint_4_rot) * p_4T'; 
+    
+    final_rot = rot_z(joint_1_rot) * rot_y(joint_2_rot+joint_3_rot+joint_4_rot);
+    
+    % disp(final_rot);
+    final_pos_results = [final_pos_results, final_pos];
+end
+
+disp(final_pos_results);
