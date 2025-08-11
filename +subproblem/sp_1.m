@@ -20,7 +20,6 @@ function [theta, is_LS] = sp_1(p1, p2, k)
 
 KxP = cross(k, p1);
 A = [KxP -cross(k,KxP)];
-
 x = A'*p2;
 
 theta = atan2(x(1),x(2));

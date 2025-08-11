@@ -12,10 +12,10 @@ p_34 = [0.124, 0, 0];
 p_4T = [0.1467, 0, 0];
 
 % forward kinematics
-joint_1_rot = 0;
+joint_1_rot = -1.2;
 joint_2_rot = 0;
-joint_3_rot = 0;
-joint_4_rot = 0;
+joint_3_rot = 0.2;
+joint_4_rot = -1.2;
 
 final_pos = p_01' + rot_z(joint_1_rot)*p_12' ...
 + rot_z(joint_1_rot) * rot_y(joint_2_rot) * p_23' ...
@@ -29,9 +29,9 @@ disp(final_pos);
 % inverse kinematics
 
 % Goal rotation/position
-x_angle = 0;
-y_angle = 0;
-z_angle = 0;
+% x_angle = 0;
+% y_angle = 0;
+% z_angle = 0;
 
 goal_rotation = final_rot;%rot_z(z_angle) * rot_y(y_angle) * rot_x(x_angle);
 goal_position = final_pos;%[0.3067; 0; 0.2045];
@@ -69,7 +69,7 @@ for theta3 = theta3_list
     
     for theta1 = theta1_list
         for theta2 = theta2_list
-            theta4 = joint4(y_angle, theta2, theta3);
+            theta4 = joint4(joint_2_rot+joint_3_rot+joint_4_rot, theta2, theta3);
             results = [results, [theta1; theta2; theta3; theta4;]];
         end
     end
