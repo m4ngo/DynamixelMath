@@ -16,10 +16,10 @@ p_4T = [0.1467, 0, 0];
 % Goal rotation/position
 x_angle = 0;
 y_angle = 0;
-z_angle = pi/2;
+z_angle = 0;
 
 goal_rotation = rot_z(z_angle) * rot_y(y_angle) * rot_x(x_angle);
-goal_position = [0; 0.3067; 0.2045];
+goal_position = [0.3067; 0; 0.2045];
 
 goal = [goal_rotation, goal_position]; % goal pos/rot as 4x4
 goal = [goal; 0, 0, 0, 1];
@@ -41,7 +41,7 @@ p_03 = p_01 + p_12 + p_23;
 
 theta3_list = joint3(p_04', p_02', axis3', g, p_03'); % subproblem 3
 
-results = []; % just a table to store all the possible solution combinations
+results = []; % table to store all the possible solution combinations
 
 p_03 = p_01 + p_12 + p_23;
 
@@ -50,14 +50,14 @@ for theta3 = theta3_list
     y_matrix = [y_matrix ; 0 0 0 1];
     e_3 = [1 0 0 p_03(1); 0 1 0 p_03(2); 0 0 1 p_03(3); 0 0 0 1] * y_matrix * [1 0 0 -p_03(1); 0 1 0 -p_03(2); 0 0 1 -p_03(3); 0 0 0 1];
     
-    [theta1_list, theta2_list] = joint1joint2(p_04', e_3, g, axis1', axis2');
+    [theta1_list, theta2_list] = joint1joint2(p_04', e_3, g, axis1', axis2', p_02');
     
     for theta1 = theta1_list
         for theta2 = theta2_list
             theta4 = joint4(y_angle, theta2, theta3);
             results = [results, [theta1; theta2; theta3; theta4;]];
         end
-    end 
+    end
 end
 
 disp(results);

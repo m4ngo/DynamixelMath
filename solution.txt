@@ -1,0 +1,41 @@
+\documentclass{article}
+\usepackage{graphicx} % Required for inserting images
+
+\title{OpenManipulatorIK}
+\author{Teddy W. Aaron T.}
+\date{August 2025}
+
+\begin{document}
+
+\maketitle
+
+For context, we are using the Paden-Kahan subproblems.
+
+\[ e_1e_2e_3e_4g(0) = g_d \]
+\[ e_1e_2e_3e_4 = g_dg^{-1}(0) \]
+
+Let $g_dg^{-1}(0) = g$ and choose a point $p$ on axis 4
+
+\[ e_1e_2e_3e_4p = gp \rightarrow e_1e_2e_3p = gp \]
+
+Now choose a point $q$ on the intersection of axes 1 and 2. We get:
+\[e_1e_2e_3p - e_1e_2q = gp - e_1e_2q\]
+
+Since $q=e_1e_2q$, we have:
+
+\[e_1e_2e_3p - e_1e_2q = gp - q\]
+
+Distributing, we get:
+
+\[e_1e_2(e_3p - q) = gp - q\]
+
+Take the magnitude of both sides to cancel $e_1e_2$ to get:
+
+\[||e_3p-q||=||gp-q||\]
+
+Apply subproblem 3 (rotation to a given distance) to find $\theta_3$ from $e_3$.\\
+
+Now that we have $\theta_3$ we return to the form $e_1e_2e_3p = gp$. 
+Since $\theta_3$ (and thus $e_3$) is known, we can use subproblem 2 (rotation about two subsequent axes) to solve for $e_1$ and $e_2$. We do so by choosing $e_3p$ and $gp$ as our 2 points and using $e_1$ and $e_2$ as our two axes. We get $\theta_1$ and $\theta_2$, leaving $\theta_4$ as the last unknown; it can be solved for by algebra using $\theta_{sum} = \theta_2 + \theta_3 + \theta_4$.
+
+\end{document}
