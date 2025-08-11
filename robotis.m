@@ -62,19 +62,24 @@ end
 
 disp(results);
 
+final_pos_results = [];
+
 % forward kinematics
+for i = 1:size(results, 2)
+    joint_1_rot = results(1,i);
+    joint_2_rot = results(2,i);
+    joint_3_rot = results(3,i);
+    joint_4_rot = results(4,i);
+    
+    final_pos = p_01' + rot_z(joint_1_rot)*p_12' ...
+    + rot_z(joint_1_rot) * rot_y(joint_2_rot) * p_23' ...
+    + rot_z(joint_1_rot) * rot_y(joint_2_rot+joint_3_rot) * p_34' ...
+    + rot_z(joint_1_rot) * rot_y(joint_2_rot+joint_3_rot+joint_4_rot) * p_4T'; 
+    
+    final_rot = rot_z(joint_1_rot) * rot_y(joint_2_rot+joint_3_rot+joint_4_rot);
+    
+    % disp(final_rot);
+    final_pos_results = [final_pos_results, final_pos];
+end
 
-joint_1_rot = results(1,1);
-joint_2_rot = results(2,1);
-joint_3_rot = results(3,1);
-joint_4_rot = results(4,1);
-
-final_pos = p_01' + rot_z(joint_1_rot)*p_12' ...
-+ rot_z(joint_1_rot) * rot_y(joint_2_rot) * p_23' ...
-+ rot_z(joint_1_rot) * rot_y(joint_2_rot+joint_3_rot) * p_34' ...
-+ rot_z(joint_1_rot) * rot_y(joint_2_rot+joint_3_rot+joint_4_rot) * p_4T'; 
-
-final_rot = rot_z(joint_1_rot) * rot_y(joint_2_rot+joint_3_rot+joint_4_rot);
-
-disp(final_rot);
-disp(final_pos);
+disp(final_pos_results);
